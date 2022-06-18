@@ -3,6 +3,7 @@ import { useTheme } from "@emotion/react";
 import { Box, Paper } from "@mui/material";
 import { Container } from "@mui/system";
 import TeamName from "./TeamName";
+import PlayCard from "./PlayerCard";
 
 export default function Formation() {
   const theme: any = useTheme();
@@ -43,9 +44,9 @@ export default function Formation() {
           >
             Formation
           </Paper>
-          <Paper sx={{ flex: 2, borderRadius: theme.spacing(0.5) }}>
-            PlayerCard
-          </Paper>
+          <Box sx={{ flex: 2, borderRadius: theme.spacing(0.5) }}>
+            <PlayCard />
+          </Box>
         </Box>
       </Box>
     </Container>
