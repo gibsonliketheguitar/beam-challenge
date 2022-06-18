@@ -3,8 +3,8 @@ import { useTheme } from "@emotion/react";
 import { Box, Paper, styled } from "@mui/material";
 import { Container } from "@mui/system";
 
-import Roster from "./Roster";
-import Formation from "./Formation";
+import Roster from "./Roster/Roster";
+import Formation from "./Formation/Formation";
 
 const Icon = styled(Paper)(({ theme }) => ({
   height: theme.spacing(4),
@@ -31,28 +31,28 @@ export default function Dashboard() {
         backgroundColor: "#111111",
       }}
     >
-        <Box
+      <Box
         sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
           marginTop: theme.spacing(4),
-            marginRight: theme.spacing(2),
-            marginLeft: theme.spacing(2),
-          }}
-        >
+          marginRight: theme.spacing(2),
+          marginLeft: theme.spacing(2),
+        }}
+      >
         <Icon sx={{ marginBottom: theme.spacing(6) }}>Logo</Icon>
-          <Icon onClick={() => setPage(0)}>Icon</Icon>
-          <Icon onClick={() => setPage(1)}>Icon</Icon>
-        </Box>
-        <Container
-          sx={{
-            padding: theme.spacing(4),
+        <Icon onClick={() => setPage(0)}>Icon</Icon>
+        <Icon onClick={() => setPage(1)}>Icon</Icon>
+      </Box>
+      <Container
+        sx={{
+          padding: theme.spacing(4),
           backgroundColor: theme.palette.background.default,
-          }}
-        >
-          {DISPLAY[page]}
-        </Container>
+        }}
+      >
+        {DISPLAY[page]}
+      </Container>
     </Box>
   );
 }
