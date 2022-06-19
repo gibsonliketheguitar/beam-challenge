@@ -33,6 +33,7 @@ export default function Roster() {
           flex: 1,
           display: "flex",
           flexDirection: "row",
+          alignItems: "flex-end",
           justifyContent: "space-between",
           marginBottom: theme.spacing(3),
           backgroundColor: "none",
