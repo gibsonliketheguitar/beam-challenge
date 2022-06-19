@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { GridCloseIcon, GridSearchIcon } from "@mui/x-data-grid";
+import SearchIcon from "../../assets/SearchIcon";
 
 export default function Search() {
   const theme: any = useTheme();
@@ -56,13 +57,15 @@ export default function Search() {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <GridSearchIcon />
+              <SearchIcon />
             </InputAdornment>
           ),
           endAdornment: canSearch ? (
             <SearchCAT onClick={onSubmit}>Search</SearchCAT>
           ) : (
-            <GridCloseIcon onClick={onReset} />
+            <InputAdornment position="end" onClick={onReset}>
+              <CloseIcon />
+            </InputAdornment>
           ),
         }}
       />

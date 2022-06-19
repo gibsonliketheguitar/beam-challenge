@@ -1,12 +1,7 @@
 import React, { useRef, useState } from "react";
-import {
-  Box,
-  InputAdornment,
-  SpeedDialIcon,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, InputAdornment, TextField, Typography } from "@mui/material";
 import { useTheme } from "@emotion/react";
+import EditIcon from "../../assets/EditIcon";
 
 export default function TeamName() {
   const theme: any = useTheme();
@@ -41,13 +36,18 @@ export default function TeamName() {
         value={name}
         onBlur={() => setCanEdit(true)}
         onChange={(e) => setName(e.target.value)}
+        sx={{
+          minWidth: theme.spacing(24),
+        }}
         InputProps={{
-          endAdornment: canEdit ? (
-            <InputAdornment position="end">
-              <SpeedDialIcon onClick={onEdit} />
+          endAdornment: (
+            <InputAdornment
+              position="end"
+              onClick={onEdit}
+              sx={{ visibility: canEdit ? "visible" : "hidden" }}
+            >
+              <EditIcon />
             </InputAdornment>
-          ) : (
-            <> </>
           ),
         }}
       />
