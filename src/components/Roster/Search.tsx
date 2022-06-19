@@ -15,11 +15,11 @@ import { rosterAtom } from "../../store/atom";
 import { default as ImportTeamButton } from "./Import";
 
 export default function Search() {
-  const theme: any = useTheme();
-  const [roster, setRoster] = useAtom(rosterAtom);
+  const [canSearch, setCanSearch] = useState(true);
   //TODO: looking into if searchInput is re-rendering each time
   const [input, setInput] = useState("");
-  const [canSearch, setCanSearch] = useState(true);
+  const [roster, _] = useAtom(rosterAtom);
+  const theme: any = useTheme();
 
   //TODO animate Search CAT so user know if it's being pressed or not
   const SearchCAT = styled(Typography)(({ theme }) => ({
@@ -41,7 +41,7 @@ export default function Search() {
   return (
     <Box id="test">
       <TextField
-        disabled={false}
+        disabled={!roster}
         id="findPlayer"
         placeholder="Find Player"
         size="small"
