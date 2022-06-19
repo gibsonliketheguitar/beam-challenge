@@ -15,12 +15,15 @@ import {
 import { rosterAtom } from "../../store/atom";
 import CloseIcon from "../../assets/CloseIcon";
 import IconButton from "@mui/material/IconButton";
+import Papa from "papaparse";
 
 export default function ImportTeam() {
   const theme: any = useTheme();
   const [open, setOpen] = useState(true);
   const [rosterFile, setRoster] = useAtom(rosterAtom);
-  const validRosterFile = !!rosterFile && rosterFile.type === "text/csv";
+  const [importError, setImportError] = useState(false);
+  const validCSV =
+    !!rosterFile && rosterFile.type === "text/csv" && !importError;
 
   const ImportBtn = styled(Button)(({ theme }) => ({
     color: theme.palette.text.primary,
@@ -46,22 +49,38 @@ export default function ImportTeam() {
   const onOpen = () => setOpen(true);
   const onClose = () => setOpen(false);
   const onFileUpload = (e: any) => {
-    const file: any = e.target.files[0];
-    if (file) setRoster(file);
+    const file: any = e.target.files;
+    if (file.length === 0) return;
+    if (file) setRoster(file[0]);
+    Papa.parse(file[0], {
+      header: true,
+      complete: (result) => {
+        const INVALID_CSV = hasEmptyField(result);
+        setImportError(() => (INVALID_CSV ? true : false));
+      },
+    });
+
+    const hasEmptyField = ({ data }: any) => {
+      for (let i = 0; i < data.length; i++) {
+        const ROW = data[i];
+        for (let [_, value] of Object.entries(ROW)) {
+          if (value === "") return true;
+        }
+      }
+      return false;
+    };
   };
 
-  useEffect(() => {
-    console.log(rosterFile);
-  }, [rosterFile]);
+  console.log(validCSV);
 
   return (
     <>
       <ImportBtn
         onClick={onOpen}
         size="medium"
-        variant={validRosterFile ? "outlined" : "contained"}
+        variant={validCSV ? "outlined" : "contained"}
       >
-        {validRosterFile ? "Re-Import Team" : "Import Team"}
+        {validCSV ? "Re-Import Team" : "Import Team"}
       </ImportBtn>
       <Box>
         <Modal open={open} onClose={onClose}>
@@ -84,46 +103,80 @@ export default function ImportTeam() {
                 marginBottom: theme.spacing(1),
               }}
             />
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography mb={1} color={theme.palette.text.primary}>
-                Roster File
+            <Typography mb={1} color={theme.palette.text.primary}>
+              Roster File
+            </Typography>
+            <TextField
+              error={!validCSV}
+              disabled={true}
+              placeholder="No file selected"
+              variant="outlined"
+              value={rosterFile ? rosterFile.name : ""}
+              sx={{
+                color: theme.palette.text.disabled,
+                width: "max-content",
+                paddingRight: theme.spacing(2),
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      color="primary"
+                      variant="outlined"
+                      component="label"
+                    >
+                      <Typography color={theme.palette.text.secondary}>
+                        Select File
+                      </Typography>
+                      <input
+                        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                        style={{ display: "none" }}
+                        type="file"
+                        onChange={(e: any) => onFileUpload(e)}
+                      />
+                    </Button>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Box mt={1}>
+              <Typography hidden={!importError} variant="h5" color="error">
+                Error
               </Typography>
-              <TextField
-                error={validRosterFile}
-                disabled={true}
-                placeholder="No file selected"
-                variant="outlined"
-                value={rosterFile ? rosterFile.name : ""}
+              <Typography mt={0.5} color={theme.palette.text.disabled}>
+                {importError
+                  ? "Your sheet is missing data. Please ensure all cells are filled out"
+                  : "File must be in .csv"}
+              </Typography>
+            </Box>
+            <Box mt={1} hidden={!validCSV}>
+              <Typography> File Summary</Typography>
+            </Box>
+            <Box
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Box
                 sx={{
-                  color: theme.palette.text.disabled,
-                  width: theme.spacing(40),
+                  display: "flex",
+                  justifyContent: "flex-end",
                 }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment variant="filled" position="end">
-                      <Button
-                        color="primary"
-                        variant="outlined"
-                        component="label"
-                      >
-                        <Typography color={theme.palette.text.secondary}>
-                          Select File
-                        </Typography>
-                        <input
-                          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                          style={{ display: "none" }}
-                          type="file"
-                          onChange={(e: any) => onFileUpload(e)}
-                        />
-                      </Button>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <Typography mt={1} color={theme.palette.text.disabled}>
-                File must be in .csv
-              </Typography>
+              >
+                <Button
+                  disabled={!validCSV}
+                  variant="contained"
+                  onClick={() => setRoster()}
+                  sx={{
+                    color: theme.palette.text.primary,
+                  }}
+                >
+                  Import
+                </Button>
+              </Box>
             </Box>
           </ModalContent>
         </Modal>
