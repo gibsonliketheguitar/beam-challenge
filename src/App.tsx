@@ -56,7 +56,6 @@ const theme = createTheme({
       primary: "#f8f8f8",
       secondary: "#CBCBCB",
       disabled: "#999999",
-      //hint: "#707070",
     },
     background: {
       default: "#222222",
