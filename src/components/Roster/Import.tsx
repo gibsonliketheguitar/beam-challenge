@@ -11,19 +11,26 @@ import {
   TextField,
   InputAdornment,
 } from "@mui/material";
+import Papa from "papaparse";
 
 import { rosterAtom } from "../../store/atom";
 import CloseIcon from "../../assets/CloseIcon";
 import IconButton from "@mui/material/IconButton";
-import Papa from "papaparse";
 
 export default function ImportTeam() {
   const theme: any = useTheme();
-  const [open, setOpen] = useState(true);
-  const [rosterFile, setRoster] = useAtom(rosterAtom);
+  const [open, setOpen] = useState(false);
+  const [importData, setImportData] = useState([]);
+  const [importFile, setImportFile] = useState<any | null>(null);
   const [importError, setImportError] = useState(false);
+  //TODO update with update Atom
+  const [_, setRoster] = useAtom(rosterAtom);
+
   const validCSV =
-    !!rosterFile && rosterFile.type === "text/csv" && !importError;
+    !!importFile &&
+    importFile.type === "text/csv" &&
+    importData.length > 0 &&
+    !importError;
 
   const ImportBtn = styled(Button)(({ theme }) => ({
     color: theme.palette.text.primary,
@@ -49,13 +56,18 @@ export default function ImportTeam() {
   const onOpen = () => setOpen(true);
   const onClose = () => setOpen(false);
   const onFileUpload = (e: any) => {
+    //TODO look at the tic tack toe stuff and shopping cart
     const file: any = e.target.files;
     if (file.length === 0) return;
-    if (file) setRoster(file[0]);
+    if (file) setImportFile(file[0]);
+
     Papa.parse(file[0], {
       header: true,
-      complete: (result) => {
+      complete: (result: any) => {
         const INVALID_CSV = hasEmptyField(result);
+        if (!INVALID_CSV) {
+          setImportData(result.data);
+        }
         setImportError(() => (INVALID_CSV ? true : false));
       },
     });
@@ -71,8 +83,82 @@ export default function ImportTeam() {
     };
   };
 
-  console.log(validCSV);
+  function getPlayerSummaryArr() {
+    if (!validCSV) return [];
+    const playerType: any = new Map([["totalPlayer", 0]]);
 
+    importData.forEach(({ Position }) => {
+      const count = (playerType.get(Position) || 0) + 1;
+      const totalPlayer = playerType.get("totalPlayer") + 1;
+
+      playerType.set(Position, count);
+      playerType.set("totalPlayer", totalPlayer);
+    });
+
+    let result = [];
+    for (const [key, value] of playerType) {
+      if (key === "totalPlayer") result[0] = ["Total Players", value];
+      if (key === "Goalkeeper") result[1] = ["Goalkeeper", value];
+      if (key === "Defender") result[2] = ["Defender", value];
+      if (key === "Midfielder") result[3] = ["Midfielder", value];
+      if (key === "Forward") result[4] = ["Forward", value];
+    }
+
+    return result;
+  }
+
+  function renderPlayerSummaryTable() {
+    const arr: any = getPlayerSummaryArr();
+    const colHead = arr.map((ele: any) => (
+      <th scope="col">
+        {
+          <Typography
+            variant="h5"
+            color={theme.palette.text.disabled}
+            align="left"
+          >
+            {ele[0]}
+          </Typography>
+        }
+      </th>
+    ));
+    const col = arr.map((ele: any) => (
+      <td>
+        {
+          <Typography
+            variant="body1"
+            color={theme.palette.text.secondary}
+            align="left"
+          >
+            {ele[1]}
+          </Typography>
+        }
+      </td>
+    ));
+
+    return (
+      <span>
+        <Typography
+          variant="h5"
+          color={theme.palette.text.primary}
+          mt={3}
+          mb={3}
+        >
+          File Summary
+        </Typography>
+        <table style={{ tableLayout: "fixed", width: "100%" }}>
+          <tr>{colHead}</tr>
+          <tr>{col}</tr>
+        </table>
+      </span>
+    );
+  }
+
+  const onUpdateRosterFile = () => {
+    if (!validCSV) return false;
+    setRoster(importData);
+    onClose();
+  };
   return (
     <>
       <ImportBtn
@@ -92,18 +178,23 @@ export default function ImportTeam() {
                 justifyContent: "space-between",
               }}
             >
-              <Typography variant="h3">Importer</Typography>
+              <Typography variant="h4">Importer</Typography>
               <IconButton onClick={onClose}>
                 <CloseIcon />
               </IconButton>
             </Box>
             <Divider
               sx={{
-                marginTop: theme.spacing(),
+                marginTop: theme.spacing(1),
                 marginBottom: theme.spacing(1),
               }}
             />
-            <Typography mb={1} color={theme.palette.text.primary}>
+            <Typography
+              variant="h5"
+              mt={2}
+              mb={1}
+              color={theme.palette.text.primary}
+            >
               Roster File
             </Typography>
             <TextField
@@ -111,7 +202,7 @@ export default function ImportTeam() {
               disabled={true}
               placeholder="No file selected"
               variant="outlined"
-              value={rosterFile ? rosterFile.name : ""}
+              value={!!importFile ? importFile.name : ""}
               sx={{
                 color: theme.palette.text.disabled,
                 width: "max-content",
@@ -146,11 +237,18 @@ export default function ImportTeam() {
               <Typography mt={0.5} color={theme.palette.text.disabled}>
                 {importError
                   ? "Your sheet is missing data. Please ensure all cells are filled out"
-                  : "File must be in .csv"}
+                  : "File must be in .csv format"}
               </Typography>
             </Box>
-            <Box mt={1} hidden={!validCSV}>
-              <Typography> File Summary</Typography>
+            <Box
+              sx={{
+                display: validCSV ? "flex" : "none",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+              mt={1}
+            >
+              {renderPlayerSummaryTable()}
             </Box>
             <Box
               sx={{
@@ -169,7 +267,7 @@ export default function ImportTeam() {
                 <Button
                   disabled={!validCSV}
                   variant="contained"
-                  onClick={() => setRoster()}
+                  onClick={onUpdateRosterFile}
                   sx={{
                     color: theme.palette.text.primary,
                   }}
