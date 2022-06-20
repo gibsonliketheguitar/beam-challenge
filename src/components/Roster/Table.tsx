@@ -27,8 +27,8 @@ export default function Table() {
   function renderColHeader() {
     if (!roster) return <></>;
     const colHead = colHeader.map((col, index) => (
-      <th key={index} scope="col">
-        <Typography variant="h6" color={theme.palette.text.secondary}>
+      <th key={index} scope="col" style={{ textAlign: "left" }}>
+        <Typography color={theme.palette.text.secondary} variant="h6">
           {col}
         </Typography>
       </th>
@@ -46,9 +46,11 @@ export default function Table() {
       )
       .map((player: any, index: number) => {
         const row = colHeader.map((key) => (
-          <td>
+          <td style={{ textAlign: "left", height: theme.spacing(2) }}>
             {key !== "" ? (
-              player[key]
+              <Typography variant="body1" color={theme.palette.text.secondary}>
+                {player[key]}
+              </Typography>
             ) : (
               <EditPlayer name={player["Player Name"]} />
             )}
@@ -59,10 +61,14 @@ export default function Table() {
   }
 
   return (
-    <table>
-      <thead>
-        <tr>{renderColHeader()}</tr>
-      </thead>
+    <table
+      style={{
+        tableLayout: "fixed",
+        width: "100%",
+        borderCollapse: "collapse",
+      }}
+    >
+      <thead>{renderColHeader()}</thead>
       <tbody>{renderRow()}</tbody>
     </table>
   );
