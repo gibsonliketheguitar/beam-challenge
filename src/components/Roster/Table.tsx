@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTheme } from "@emotion/react";
 import { useAtom } from "jotai";
 import { IconButton, Typography } from "@mui/material";
 import ThreeDots from "../../assets/ThreeDots";
-import { rosterAtom } from "../../store/atom";
+import { rosterAtom, searchAtom } from "../../store/atom";
 
 const colHeader = [
   "Player Name",
@@ -21,6 +21,7 @@ const colHeader = [
 export default function Table() {
   const theme: any = useTheme();
   const [roster, _] = useAtom(rosterAtom);
+  const [search, __] = useAtom(searchAtom);
   if (!roster) return <></>;
 
   function renderColHeader() {
@@ -38,7 +39,11 @@ export default function Table() {
   function renderRow() {
     if (!roster) return [];
     return roster
-      .filter((ele: any) => ele)
+      .filter(
+        (player: any) =>
+          player["Player Name"].toLowerCase().includes(search) ||
+          player["Position"].toLowerCase().includes(search)
+      )
       .map((player: any, index: number) => {
         const row = colHeader.map((key) => (
           <td>
