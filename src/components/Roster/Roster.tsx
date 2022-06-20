@@ -5,6 +5,7 @@ import { useAtom } from "jotai";
 
 import EmptyTable from "./EmptyTable";
 import Search from "./Search";
+import Table from "./Table";
 import TeamName from "./TeamName";
 
 import { rosterAtom } from "../../store/atom";
@@ -48,7 +49,7 @@ export default function Roster() {
             padding: theme.spacing(2),
           }}
         >
-          {!roster ? <EmptyTable /> : ""}
+          {!roster ? <EmptyTable /> : <Table />}
         </Box>
       </Box>
     </>
