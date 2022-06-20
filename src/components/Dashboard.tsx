@@ -27,7 +27,7 @@ export default function Dashboard() {
     <Box
       sx={{
         display: "flex",
-        height: "100vh",
+        height: "100%",
         width: "100%",
         backgroundColor: "#111111",
       }}
@@ -67,6 +67,9 @@ export default function Dashboard() {
       </Box>
       <Container
         sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
           padding: theme.spacing(4),
           backgroundColor: theme.palette.background.default,
         }}

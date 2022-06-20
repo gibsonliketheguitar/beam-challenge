@@ -2,6 +2,7 @@ import React from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Dashboard from "./components/Dashboard";
 import { CssBaseline } from "@mui/material";
+import "./App.css";
 
 const commonStyles = {
   typography: {

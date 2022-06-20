@@ -13,13 +13,13 @@ import {
 } from "@mui/material";
 import Papa from "papaparse";
 
-import { rosterAtom } from "../../store/atom";
+import { importModalAtom, rosterAtom } from "../../store/atom";
 import CloseIcon from "../../assets/CloseIcon";
 import IconButton from "@mui/material/IconButton";
 
 export default function ImportTeam() {
   const theme: any = useTheme();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useAtom(importModalAtom);
   const [importData, setImportData] = useState([]);
   const [importFile, setImportFile] = useState<any | null>(null);
   const [importError, setImportError] = useState(false);
