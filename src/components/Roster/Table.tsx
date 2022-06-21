@@ -1,9 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { useAtom } from "jotai";
-import { IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Popover, Typography } from "@mui/material";
 import ThreeDots from "../../assets/ThreeDots";
 import { rosterAtom, searchAtom } from "../../store/atom";
+import DeleteIcon from "../../assets/DeleteIcon";
+import EditIcon from "../../assets/EditIcon";
+import CloseIcon from "../../assets/CloseIcon";
 
 const colHeader = [
   "Player Name",
@@ -22,7 +25,20 @@ export default function Table() {
   const theme: any = useTheme();
   const [roster, _] = useAtom(rosterAtom);
   const [search, __] = useAtom(searchAtom);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const anchorOwner = useRef(null);
+
   if (!roster) return <></>;
+
+  function handleClose() {
+    setAnchorEl(null);
+    anchorOwner.current = null;
+  }
+
+  function updateAnchor(e: any, name: any) {
+    setAnchorEl(e.currentTarget);
+    anchorOwner.current = name;
+  }
 
   function renderColHeader() {
     if (!roster) return <></>;
@@ -52,7 +68,11 @@ export default function Table() {
                 {player[key]}
               </Typography>
             ) : (
-              <EditPlayer name={player["Player Name"]} />
+              <IconButton
+                onClick={(e: any) => updateAnchor(e, player["Player Name"])}
+              >
+                <ThreeDots />
+              </IconButton>
             )}
           </td>
         ));
@@ -70,16 +90,53 @@ export default function Table() {
     >
       <thead>{renderColHeader()}</thead>
       <tbody>{renderRow()}</tbody>
-    </table>
-  );
-}
 
-function EditPlayer(name: any) {
-  return (
-    <>
-      <IconButton>
-        <ThreeDots />
-      </IconButton>
-    </>
+      <Popover
+        id={!!anchorEl ? "popoverEdit" : undefined}
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "center",
+          horizontal: "center",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            padding: theme.spacing(1.5),
+            width: theme.spacing(25),
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h5" p={1}>
+              Actions
+            </Typography>
+            <IconButton onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <EditIcon />
+            <Typography p={1.5}> Edit player </Typography>
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <DeleteIcon />
+            <Typography p={1.5}> Delete Player </Typography>
+          </Box>
+        </Box>
+      </Popover>
+    </table>
   );
 }
