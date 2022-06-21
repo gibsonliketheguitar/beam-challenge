@@ -1,7 +1,15 @@
 import React, { useRef, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { useAtom } from "jotai";
-import { Box, IconButton, Popover, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  ButtonBase,
+  Dialog,
+  IconButton,
+  Popover,
+  Typography,
+} from "@mui/material";
 import ThreeDots from "../../assets/ThreeDots";
 import { rosterAtom, searchAtom } from "../../store/atom";
 import DeleteIcon from "../../assets/DeleteIcon";
@@ -26,6 +34,7 @@ export default function Table() {
   const [roster, _] = useAtom(rosterAtom);
   const [search, __] = useAtom(searchAtom);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openDelete, setDelete] = useState(false);
   const anchorOwner = useRef(null);
 
   if (!roster) return <></>;
@@ -81,28 +90,12 @@ export default function Table() {
   }
 
   return (
-    <table
-      style={{
-        tableLayout: "fixed",
-        width: "100%",
-        borderCollapse: "collapse",
-      }}
-    >
-      <thead>{renderColHeader()}</thead>
-      <tbody>{renderRow()}</tbody>
-
-      <Popover
-        id={!!anchorEl ? "popoverEdit" : undefined}
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "center",
-          horizontal: "center",
+    <>
+      <Dialog
+        open={openDelete}
+        onClose={() => {
+          setDelete(false);
+          handleClose();
         }}
       >
         <Box
@@ -110,7 +103,8 @@ export default function Table() {
             display: "flex",
             flexDirection: "column",
             padding: theme.spacing(1.5),
-            width: theme.spacing(25),
+            width: theme.spacing(50),
+            backgroundColor: theme.palette.background.paper,
           }}
         >
           <Box
@@ -121,22 +115,94 @@ export default function Table() {
             }}
           >
             <Typography variant="h5" p={1}>
-              Actions
+              Are you sure
             </Typography>
-            <IconButton onClick={handleClose}>
+            <IconButton
+              onClick={() => {
+                setDelete(false);
+                handleClose();
+              }}
+            >
               <CloseIcon />
             </IconButton>
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <EditIcon />
-            <Typography p={1.5}> Edit player </Typography>
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <DeleteIcon />
-            <Typography p={1.5}> Delete Player </Typography>
+          <Typography mt={2} mb={2}>
+            This Action cannot be done?
+          </Typography>
+          <Box p={1} sx={{ display: "flex", flexDirection: "flex-end" }}>
+            <Button variant="outlined" sx={{ marginRight: theme.spacing(1) }}>
+              Cancel
+            </Button>
+            <Button variant="contained" color="error">
+              Delete
+            </Button>
           </Box>
         </Box>
-      </Popover>
-    </table>
+      </Dialog>
+      <table
+        style={{
+          tableLayout: "fixed",
+          width: "100%",
+          borderCollapse: "collapse",
+        }}
+      >
+        <thead>{renderColHeader()}</thead>
+        <tbody>{renderRow()}</tbody>
+        <Popover
+          id={!!anchorEl ? "popoverEdit" : undefined}
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "center",
+            horizontal: "center",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              padding: theme.spacing(1.5),
+              width: theme.spacing(25),
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="h5" p={1}>
+                Actions
+              </Typography>
+              <IconButton onClick={handleClose}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <EditIcon />
+              <Typography p={1.5}> Edit player </Typography>
+            </Box>
+            <ButtonBase
+              sx={{
+                display: "flex",
+                justifyContent: "flex-start",
+                borderRadius: theme.spacing(0.5),
+                paddingLeft: theme.spacing(1),
+              }}
+              onClick={() => setDelete(true)}
+            >
+              <DeleteIcon />
+              <Typography p={1.5}> Delete Player </Typography>
+            </ButtonBase>
+          </Box>
+        </Popover>
+      </table>
+    </>
   );
 }
