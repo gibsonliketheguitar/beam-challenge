@@ -31,7 +31,7 @@ const colHeader = [
 
 export default function Table() {
   const theme: any = useTheme();
-  const [roster, _] = useAtom(rosterAtom);
+  const [roster, setRoster] = useAtom(rosterAtom);
   const [search, __] = useAtom(searchAtom);
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDelete, setDelete] = useState(false);
@@ -42,6 +42,17 @@ export default function Table() {
   function handleClose() {
     setAnchorEl(null);
     anchorOwner.current = null;
+  }
+
+  function handleDelete() {
+    if (anchorOwner.current === null) return;
+    setRoster((prev: any) =>
+      prev.filter(
+        (player: any) => player["Player Name"] !== anchorOwner.current
+      )
+    );
+    setDelete(false);
+    handleClose();
   }
 
   function updateAnchor(e: any, name: any) {
@@ -126,14 +137,12 @@ export default function Table() {
               <CloseIcon />
             </IconButton>
           </Box>
-          <Typography mt={2} mb={2}>
-            This Action cannot be done?
-          </Typography>
-          <Box p={1} sx={{ display: "flex", flexDirection: "flex-end" }}>
+          <Typography p={2}>This Action cannot be done?</Typography>
+          <Box p={1} sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button variant="outlined" sx={{ marginRight: theme.spacing(1) }}>
               Cancel
             </Button>
-            <Button variant="contained" color="error">
+            <Button variant="contained" color="error" onClick={handleDelete}>
               Delete
             </Button>
           </Box>
