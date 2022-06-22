@@ -1,5 +1,5 @@
 import React from "react";
-import { useUpdateAtom } from "jotai/utils";
+import { useAtom } from "jotai";
 import { Box, Button, Dialog, IconButton, Typography } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import CloseIcon from "../../assets/CloseIcon";
@@ -12,7 +12,7 @@ export default function PlayerDelete({
   closeParentPopover,
 }: any) {
   const theme: any = useTheme();
-  const setRoster = useUpdateAtom(rosterAtom);
+  const [roster, setRoster] = useAtom(rosterAtom);
   const onCloseDeleteAndParentPopover = () => {
     setOpen(false);
     closeParentPopover();
@@ -28,6 +28,7 @@ export default function PlayerDelete({
     onCloseDeleteAndParentPopover();
   };
 
+  if (!open) return <></>;
   return (
     <Dialog open={open} onClose={onCloseDeleteAndParentPopover}>
       <Box

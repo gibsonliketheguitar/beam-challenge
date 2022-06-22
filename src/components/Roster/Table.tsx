@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { useAtom, useAtomValue } from "jotai";
-import { IconButton, Typography } from "@mui/material";
+import { IconButton, Typography, useEventCallback } from "@mui/material";
 import ThreeDots from "../../assets/ThreeDots";
 import { rosterAtom, searchAtom } from "../../store/atom";
 import PlayerDataAction from "./PlayerDataAction";
@@ -25,6 +25,10 @@ export default function Table() {
   const [anchorEl, setAnchorEl] = useState(null);
   const roster = useAtomValue(rosterAtom);
   const search = useAtomValue(searchAtom);
+
+  useEffect(() => {
+    console.log(anchorOwner);
+  }, [anchorOwner.current]);
 
   if (!roster) return <></>;
 

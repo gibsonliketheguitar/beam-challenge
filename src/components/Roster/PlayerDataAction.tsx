@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   ButtonBase,
@@ -25,8 +25,9 @@ export default function PlayerDataAction({
   const [openEdit, setEdit] = useState(false);
 
   function handleClose() {
-    setAnchorEl(null);
     anchorOwner.current = null;
+    setAnchorEl(null);
+    console.log(anchorOwner.current);
   }
 
   return (
