@@ -1,14 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { Box, Paper } from "@mui/material";
 import { Container } from "@mui/system";
 import TeamName from "./TeamName";
 import PlayCard from "./PlayerCard";
+import { useAtom } from "jotai";
+import { rosterAtom } from "../../store/atom";
+import StarterErrorDialog from "./StarterErrorDialog";
 
 export default function Formation() {
+  const [starterError, setError] = useState(false)
+  const [roster, _ ] = useAtom(rosterAtom)
   const theme: any = useTheme();
+
+  const close = () => setError(false)
+
+  useEffect(() => {
+    if(!roster) return
+    let totalStarter = 0
+    for(let i = 0; i < roster.length; i++){
+      if(roster[i]['Starter'] === 'Yes') totalStarter++
+    }
+
+    if(totalStarter > 9) setError(true) 
+
+  }, [roster])
+
   return (
     <Container sx={{ display: "flex", flexDirection: "column" }}>
+      <StarterErrorDialog open={starterError} close={close} />
       <Box
         sx={{
           flex: 1,

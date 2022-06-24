@@ -65,6 +65,9 @@ const theme = createTheme({
     error: {
       main: "#D23131",
     },
+    warning: {
+      main: '#FEA013'
+    }
   },
   ...commonStyles,
 });
