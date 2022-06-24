@@ -16,11 +16,10 @@ import {
 } from "@mui/material";
 
 import CloseIcon from "../../assets/CloseIcon";
-import NATIONS from "../../assets/data/countries.json";
+import NATIONALITY from "../../assets/data/nationality.json";
 import POSITIONS from "../../assets/data/position.json";
 
 import { rosterAtom } from "../../store/atom";
-import { classNames } from "react-select/dist/declarations/src/utils";
 
 interface IFormInput {
   "Player Name": string;
@@ -42,8 +41,7 @@ export default function PlayerEdit({
 }: any) {
   const theme: any = useTheme();
   const [roster, setRoster] = useAtom(rosterAtom);
-  const [playerData, setPlayer] = useState<any>({});
-  const { control, handleSubmit, formState } = useForm<IFormInput>();
+  const { control, handleSubmit, formState, reset } = useForm<IFormInput>();
   const { isDirty } = formState;
   const noChange = !isDirty;
 
@@ -52,26 +50,23 @@ export default function PlayerEdit({
     closeParentPopover();
   };
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    //if (disableSubmit) return;
-    setRoster((prev: any) =>
-      prev.map((player: any) =>
-        player["Player Name"] === player[anchorOwner.current]
-          ? {
-              ...data,
-              Nationality: data["Nationality"].value,
-              Position: data["Position"].value,
-            }
-          : player
-      )
-    );
+  const onSubmit: SubmitHandler<IFormInput> = (updatedPlayer) => {
+    if (!isDirty) return;
+    setRoster((prev: any) => {
+      const newRoster = prev.map((player: any) => {
+        return player["Player Name"] === anchorOwner.current
+          ? { ...player, ...updatedPlayer }
+          : player;
+      });
+      return newRoster;
+    });
     onCloseEditAndParentPopover();
   };
 
-  const NATION_OPTIONS: any = NATIONS.map((nation) => {
+  const NATION_OPTIONS: any = NATIONALITY.map((ele) => {
     return {
-      value: nation,
-      label: nation[0].toUpperCase() + nation.slice(1),
+      value: ele["nationality"],
+      label: ele["nationality"][0].toUpperCase() + ele["nationality"].slice(1),
     };
   });
 
@@ -82,15 +77,14 @@ export default function PlayerEdit({
     };
   });
 
-  //TODO reset react hook form data, missing something.
-  //probably don't even need this use effect
+  const PLAYER_DATA = roster.filter(
+    (player: any) => player["Player Name"] === anchorOwner.current
+  )[0];
+
   useEffect(() => {
-    if (anchorOwner.current === null) return;
-    const data = roster.filter(
-      (player: any) => player["Player Name"] === anchorOwner.current
-    )[0];
-    setPlayer(data);
-  }, [anchorOwner.current]);
+    if (!roster) return;
+    reset({});
+  }, [roster]);
 
   if (!open) return <></>;
   return (
@@ -125,7 +119,7 @@ export default function PlayerEdit({
             <Controller
               name="Player Name"
               control={control}
-              defaultValue={playerData["Player Name"]}
+              defaultValue={PLAYER_DATA["Player Name"]}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -141,7 +135,7 @@ export default function PlayerEdit({
             <Controller
               name="Jersey Number"
               control={control}
-              defaultValue={playerData["Jersey Number"]}
+              defaultValue={PLAYER_DATA["Jersey Number"]}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -155,7 +149,7 @@ export default function PlayerEdit({
             <Controller
               name="Height"
               control={control}
-              defaultValue={playerData["Height"]}
+              defaultValue={PLAYER_DATA["Height"]}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -171,7 +165,7 @@ export default function PlayerEdit({
             <Controller
               name="Weight"
               control={control}
-              defaultValue={playerData["Weight"]}
+              defaultValue={PLAYER_DATA["Weight"]}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -185,7 +179,7 @@ export default function PlayerEdit({
             <Controller
               name="Nationality"
               control={control}
-              defaultValue={playerData["Nationality"]}
+              defaultValue={PLAYER_DATA["Nationality"]}
               render={({ field }) => (
                 <Select
                   {...field}
@@ -200,7 +194,7 @@ export default function PlayerEdit({
             <Controller
               name="Position"
               control={control}
-              defaultValue={playerData["Position"]}
+              defaultValue={PLAYER_DATA["Position"]}
               render={({ field }) => (
                 <Select {...field} options={POSITION_OPTIONS} />
               )}
@@ -211,13 +205,9 @@ export default function PlayerEdit({
             <Controller
               name="Starter"
               control={control}
+              defaultValue={PLAYER_DATA["Starter"]}
               render={({ field }) => (
-                <RadioGroup
-                  row
-                  {...field}
-                  aria-label="Starter"
-                  defaultValue={playerData["Starter"]}
-                >
+                <RadioGroup row {...field} aria-label="Starter">
                   <FormControlLabel
                     value="Yes"
                     control={<Radio />}
