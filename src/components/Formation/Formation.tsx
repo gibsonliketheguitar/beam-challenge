@@ -1,33 +1,58 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { Box, Paper } from "@mui/material";
-import { Container } from "@mui/system";
 import TeamName from "./TeamName";
 import PlayCard from "./PlayerCard";
 import { useAtom } from "jotai";
 import { rosterAtom } from "../../store/atom";
-import StarterErrorDialog from "./StarterErrorDialog";
+import ErrorDialog from "../../common/ErrorDialog";
 
 export default function Formation() {
-  const [starterError, setError] = useState(false);
   const [roster, _] = useAtom(rosterAtom);
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState<any>({ title: '', body: ''});
   const theme: any = useTheme();
 
-  const close = () => setError(false);
+  const close = () => setOpen(false);
 
   useEffect(() => {
-    if (!roster) return;
-    let totalStarter = 0;
-    for (let i = 0; i < roster.length; i++) {
-      if (roster[i]["Starter"] === "Yes") totalStarter++;
+    function moreThan9Starter(arr: any) {
+      let totalStarter = 0;
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i]["Starter"] === "Yes") totalStarter++;
+      }
+      return totalStarter > 9;
     }
 
-    if (totalStarter > 9) setError(true);
+    let state: any = {};
+    if (!roster) {
+      state = {
+        title: "No player data found",
+        body: "Please import your roster first",
+      };
+    } else if (!!roster && moreThan9Starter(roster)) {
+      state = {
+        title: "There are too many starter",
+        body: "Your team has too many starters for one or more of the positions in the 4-3-3 formation",
+      };
+    }
+    else if(!!roster && !moreThan9Starter(roster)){
+      state = {
+        title: '',
+        body: ''
+      }
+    }
+
+    if(state.title !== '' && state.body !== ''){
+      setError(state)
+      setOpen(true)
+    }
   }, [roster]);
+ 
 
   return (
     <>
-      <StarterErrorDialog open={starterError} close={close} />
+      <ErrorDialog open={open} close={close} title={error.title} body={error.body} onClose={close}/>
       <Box
         sx={{
           flex: 1,
@@ -56,8 +81,7 @@ export default function Formation() {
             height: "100%",
           }}
         >
-          <
-            Paper
+          <Paper
             sx={{
               flex: 3,
               marginRight: theme.spacing(4),
