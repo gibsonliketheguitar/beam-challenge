@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import Select from "react-select";
+import React, { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTheme } from "@emotion/react";
 import { useAtom } from "jotai";
@@ -11,6 +10,8 @@ import {
   IconButton,
   Radio,
   RadioGroup,
+  Select,
+  MenuItem,
   TextField,
   Typography,
 } from "@mui/material";
@@ -20,6 +21,7 @@ import NATIONALITY from "../../assets/data/nationality.json";
 import POSITIONS from "../../assets/data/position.json";
 
 import { rosterAtom } from "../../store/atom";
+import SelectOption from "../../common/Select";
 
 interface IFormInput {
   "Player Name": string;
@@ -181,11 +183,11 @@ export default function PlayerEdit({
               control={control}
               defaultValue={PLAYER_DATA["Nationality"]}
               render={({ field }) => (
-                <Select
-                  {...field}
+                <SelectOption 
+                  id='NationalityPosition'
+                  label={'Nationality'}
+                  field={field}
                   options={NATION_OPTIONS}
-                  //label="Nationality"
-                  //sx={{ width: "100%", borderRadius: theme.spacing(1) }}
                 />
               )}
             />
@@ -196,7 +198,12 @@ export default function PlayerEdit({
               control={control}
               defaultValue={PLAYER_DATA["Position"]}
               render={({ field }) => (
-                <Select {...field} options={POSITION_OPTIONS} />
+                <SelectOption 
+                  id='PlayerPosition' 
+                  label='Position' 
+                  field={field} 
+                  options={POSITION_OPTIONS}
+                />
               )}
             />
           </Box>
