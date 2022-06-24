@@ -11,7 +11,7 @@ import FormationIcon from "../assets/FormationIcon";
 
 export default function Dashboard() {
   const theme: any = useTheme();
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
 
   enum Nav {
     Roster = 0,

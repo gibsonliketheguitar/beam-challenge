@@ -11,7 +11,7 @@ export default function PlayCard() {
         backgroundColor: theme.palette.background.default,
         padding: theme.spacing(4),
         borderRadius: theme.spacing(0.5),
-        height: theme.spacing(49),
+        height: '100%',
       }}
     >
       <Box sx={{ flex: 4, display: "flex", flexDirection: "column" }}>

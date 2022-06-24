@@ -9,25 +9,24 @@ import { rosterAtom } from "../../store/atom";
 import StarterErrorDialog from "./StarterErrorDialog";
 
 export default function Formation() {
-  const [starterError, setError] = useState(false)
-  const [roster, _ ] = useAtom(rosterAtom)
+  const [starterError, setError] = useState(false);
+  const [roster, _] = useAtom(rosterAtom);
   const theme: any = useTheme();
 
-  const close = () => setError(false)
+  const close = () => setError(false);
 
   useEffect(() => {
-    if(!roster) return
-    let totalStarter = 0
-    for(let i = 0; i < roster.length; i++){
-      if(roster[i]['Starter'] === 'Yes') totalStarter++
+    if (!roster) return;
+    let totalStarter = 0;
+    for (let i = 0; i < roster.length; i++) {
+      if (roster[i]["Starter"] === "Yes") totalStarter++;
     }
 
-    if(totalStarter > 9) setError(true) 
-
-  }, [roster])
+    if (totalStarter > 9) setError(true);
+  }, [roster]);
 
   return (
-    <Container sx={{ display: "flex", flexDirection: "column" }}>
+    <>
       <StarterErrorDialog open={starterError} close={close} />
       <Box
         sx={{
@@ -43,19 +42,22 @@ export default function Formation() {
       </Box>
       <Box
         sx={{
-          flex: 4,
+          flex: 11,
           backgroundColor: theme.palette.background.paper,
           padding: theme.spacing(4),
           borderRadius: theme.spacing(0.5),
+          height: "calc(100vh - 46px)",
+          marginBottom: theme.spacing(4),
         }}
       >
         <Box
           sx={{
             display: "flex",
-            height: theme.spacing(49),
+            height: "100%",
           }}
         >
-          <Paper
+          <
+            Paper
             sx={{
               flex: 3,
               marginRight: theme.spacing(4),
@@ -64,11 +66,17 @@ export default function Formation() {
           >
             Formation
           </Paper>
-          <Box sx={{ flex: 2, borderRadius: theme.spacing(0.5) }}>
+          <Paper
+            sx={{
+              flex: 2,
+              height: "100%",
+              borderRadius: theme.spacing(0.5),
+            }}
+          >
             <PlayCard />
-          </Box>
+          </Paper>
         </Box>
       </Box>
-    </Container>
+    </>
   );
 }
