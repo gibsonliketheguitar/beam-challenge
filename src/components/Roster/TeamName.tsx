@@ -1,19 +1,26 @@
 import React, { useRef, useState } from "react";
 import { Box, InputAdornment, TextField, Typography } from "@mui/material";
+import { useAtom } from "jotai";
 import { useTheme } from "@emotion/react";
+
 import EditIcon from "../../assets/EditIcon";
+import { teamNameAtom } from "../../store/atom";
 
 export default function TeamName() {
   const theme: any = useTheme();
   const teamNameRef: any = useRef();
+  const [teamName, setName] = useAtom(teamNameAtom);
   const [canEdit, setCanEdit] = useState(true);
-  const [name, setName] = useState("");
 
   const onEdit = () => {
     setCanEdit(false);
     setTimeout(() => {
       teamNameRef.current.focus();
     }, 0);
+  };
+
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter" || e.key === "Escape") setCanEdit(true);
   };
 
   return (
@@ -33,9 +40,10 @@ export default function TeamName() {
         size="small"
         placeholder="My Team"
         variant="outlined"
-        value={name}
+        value={teamName}
         onBlur={() => setCanEdit(true)}
         onChange={(e) => setName(e.target.value)}
+        onKeyDown={handleKeyDown}
         sx={{
           minWidth: theme.spacing(24),
         }}

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTheme } from "@emotion/react";
 import { Box } from "@mui/material";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai/utils";
 
 import EmptyTable from "./EmptyTable";
 import Search from "./Search";
@@ -11,7 +11,7 @@ import TeamName from "./TeamName";
 import { rosterAtom } from "../../store/atom";
 
 export default function Roster() {
-  const [roster, _] = useAtom(rosterAtom);
+  const roster = useAtomValue(rosterAtom);
   const theme: any = useTheme();
 
   return (
