@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { Box, Paper } from "@mui/material";
+import { useAtom } from "jotai";
+
+import EmptyPlayerCard from "./EmptyPlayerCard";
 import TeamName from "./TeamName";
 import PlayCard from "./PlayerCard";
-import { useAtom } from "jotai";
-import { rosterAtom } from "../../store/atom";
+
 import ErrorDialog from "../../common/ErrorDialog";
+import { rosterAtom } from "../../store/atom";
 
 export default function Formation() {
   const [roster, _] = useAtom(rosterAtom);
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState<any>({ title: '', body: ''});
+  const [selectedPlayer, setPlayer] = useState(null)
+  const [error, setError] = useState<any>({ title: "", body: "" });
   const theme: any = useTheme();
 
   const close = () => setOpen(false);
@@ -35,24 +39,33 @@ export default function Formation() {
         title: "There are too many starter",
         body: "Your team has too many starters for one or more of the positions in the 4-3-3 formation",
       };
-    }
-    else if(!!roster && !moreThan9Starter(roster)){
+    } else if (!!roster && !moreThan9Starter(roster)) {
       state = {
-        title: '',
-        body: ''
-      }
+        title: "",
+        body: "",
+      };
     }
 
-    if(state.title !== '' && state.body !== ''){
-      setError(state)
-      setOpen(true)
+    if (state.title !== "" && state.body !== "") {
+      setError(state);
+      setOpen(true);
     }
   }, [roster]);
- 
+
+  useEffect(() => {
+    if(!roster) return 
+    setPlayer(roster[0])
+  }, [roster])
 
   return (
     <>
-      <ErrorDialog open={open} close={close} title={error.title} body={error.body} onClose={close}/>
+      <ErrorDialog
+        open={open}
+        close={close}
+        title={error.title}
+        body={error.body}
+        onClose={close}
+      />
       <Box
         sx={{
           flex: 1,
@@ -71,8 +84,7 @@ export default function Formation() {
           backgroundColor: theme.palette.background.paper,
           padding: theme.spacing(4),
           borderRadius: theme.spacing(0.5),
-          height: "calc(100vh - 46px)",
-          marginBottom: theme.spacing(4),
+          height: "100%",
         }}
       >
         <Box
@@ -88,7 +100,7 @@ export default function Formation() {
               borderRadius: theme.spacing(0.5),
             }}
           >
-            Formation
+            TODO: Formation
           </Paper>
           <Paper
             sx={{
@@ -97,7 +109,7 @@ export default function Formation() {
               borderRadius: theme.spacing(0.5),
             }}
           >
-            <PlayCard />
+            {!roster ? <EmptyPlayerCard /> : <PlayCard  selected={selectedPlayer}/>}
           </Paper>
         </Box>
       </Box>

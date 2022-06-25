@@ -1,8 +1,54 @@
 import React from "react";
-import { Box, Divider, Paper, Typography, useTheme } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Divider,
+  Grid,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import {
+  NAME,
+  POSITION,
+  HEIGHT,
+  IMG_FLAG,
+  IMG_PLAYER,
+  WEIGHT,
+  NATIONALITY,
+  APPEARANCES,
+  MIN_PLAYED,
+  CLEAN_SHEETS,
+  SAVES,
+  JERSEY_NUMBER,
+} from "../../utils/constant/PLAYER";
 
-export default function PlayCard() {
+export default function PlayCard({ selected }: any) {
   const theme = useTheme();
+  if (!selected) return <></>;
+  const {
+    [NAME]: name,
+    [POSITION]: position,
+    [HEIGHT]: height,
+    [IMG_PLAYER]: playerImg,
+    [IMG_FLAG]: flagImg,
+    [JERSEY_NUMBER]: number,
+    [WEIGHT]: weight,
+    [NATIONALITY]: nationality,
+    [APPEARANCES]: appearances,
+    [MIN_PLAYED]: minutes,
+    [CLEAN_SHEETS]: sheets,
+    [SAVES]: saves,
+  }: any = selected;
+
+  console.log("check", playerImg);
+
+  const GAME_STATS = [
+    { label: APPEARANCES, value: appearances },
+    { label: MIN_PLAYED, value: minutes },
+    { label: CLEAN_SHEETS, value: sheets },
+    { label: SAVES, value: saves },
+  ];
+
   return (
     <Box
       sx={{
@@ -11,54 +57,115 @@ export default function PlayCard() {
         backgroundColor: theme.palette.background.default,
         padding: theme.spacing(4),
         borderRadius: theme.spacing(0.5),
-        height: '100%',
+        height: "100%",
       }}
     >
-      <Box sx={{ flex: 4, display: "flex", flexDirection: "column" }}>
-        <Box sx={{ flex: 3 }}>
-          <Typography>Player Number</Typography>
+      <Box
+        flex={2}
+        display="flex"
+        flexDirection="column"
+        justifyContent="flex-end"
+      >
+        <Box flex={3} position="relative">
+          <Typography
+            variant="h2"
+            color="primary"
+            sx={{ position: "absolute", top: "0px", left: "0px" }}
+          >
+            {number}
+          </Typography>
+          <Box flex={1} display="flex" justifyContent="center">
+            <Box component="img" src={playerImg} height={theme.spacing(40)} />
+          </Box>
+          <Box
+            pb={2}
+            pt={2}
+            sx={{ position: "absolute", bottom: "0px", left: "0px" }}
+          >
+            <Typography variant="h3" color="text.main">
+              {name}
+            </Typography>
+            <Typography variant="h3" color="primary">
+              {position}
+            </Typography>
+          </Box>
         </Box>
-        <Box sx={{ flex: 1 }}>
-          <Typography>Player Name</Typography>
-          <Typography>Player Position </Typography>
-        </Box>
-      </Box>
-      <Box sx={{ flex: 1, display: "flex", justifyContent: "space-between" }}>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography>Height</Typography>
-          <Typography>1.85 m</Typography>
-        </Box>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography>Weight</Typography>
-          <Typography>89kg</Typography>
-        </Box>
-        <Box>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography>Nationality</Typography>
-            <Typography>Costa Rican</Typography>
+        <Box
+          flex={1}
+          mt={2}
+          display="flex"
+          alignItems="flex-start"
+          justifyContent="space-between"
+        >
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="space-between"
+          >
+            <Typography variant="body1" color="text.secondary" p={1}>
+              Height
+            </Typography>
+            <Typography variant="h4" color="text.primary" p={1}>
+              {height + " m"}
+            </Typography>
+          </Box>
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="space-between"
+          >
+            <Typography variant="body1" color="text.secondary" p={1}>
+              Weight
+            </Typography>
+            <Typography variant="h4" color="text.primary" p={1}>
+              {weight + " kg"}
+            </Typography>
+          </Box>
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="space-between"
+          >
+            <Typography variant="body1" color="text.secondary" p={1}>
+              Nationality
+            </Typography>
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <Avatar
+                src={flagImg}
+                sx={{
+                  width: theme.spacing(3),
+                  height: theme.spacing(3),
+                  padding: theme.spacing(0.1),
+                  backgroundColor: theme.palette.text.primary,
+                }}
+              />
+              <Typography color="text.primary" p={1}>
+                {nationality}
+              </Typography>
+            </Box>
           </Box>
         </Box>
       </Box>
-      <Divider />
-      <Box sx={{ flex: 1, display: "flex", justifyContent: "space-between" }}>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography>26</Typography>
-          <Typography>Apperances</Typography>
-        </Box>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography>2308</Typography>
-          <Typography>Minutes Played</Typography>
-        </Box>
-      </Box>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography>10</Typography>
-          <Typography>Clean Sheets</Typography>
-        </Box>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Typography>76</Typography>
-          <Typography>Saves</Typography>
-        </Box>
+      <Divider
+        sx={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(2) }}
+      />
+      <Box flex={1}>
+        <Grid container direction="row" spacing={2}>
+          {GAME_STATS.map((ele: any, indx: number) => {
+            return (
+              <Grid key={indx} item xs={6}>
+                <Box display="flex" flexDirection="column">
+                  <Typography variant="h2" color="primary">
+                    {ele.value}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    {ele.label}
+                  </Typography>
+                </Box>
+              </Grid>
+            );
+          })}
+        </Grid>
       </Box>
     </Box>
   );

@@ -26,12 +26,6 @@ export default function Table() {
   const roster = useAtomValue(rosterAtom);
   const search = useAtomValue(searchAtom);
 
-  useEffect(() => {
-    console.log(anchorOwner);
-  }, [anchorOwner.current]);
-
-  if (!roster) return <></>;
-
   function updateAnchor(e: any, name: any) {
     setAnchorEl(e.currentTarget);
     anchorOwner.current = name;
@@ -77,6 +71,7 @@ export default function Table() {
       });
   }
 
+  if (!roster) return <></>;
   return (
     <>
       <table
