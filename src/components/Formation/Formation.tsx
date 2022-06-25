@@ -9,23 +9,50 @@ import PlayCard from "./PlayerCard";
 
 import ErrorDialog from "../../common/ErrorDialog";
 import { rosterAtom } from "../../store/atom";
+import { POSITION, STARTER } from "../../utils/constant/PLAYER";
+import {
+  DEFENDER,
+  FORWARD,
+  GOALKEEPER,
+  MIDFIELDER,
+} from "../../utils/constant/POSITION";
 
 export default function Formation() {
   const [roster, _] = useAtom(rosterAtom);
   const [open, setOpen] = useState(false);
-  const [selectedPlayer, setPlayer] = useState(null)
+  const [selectedPlayer, setPlayer] = useState(null);
   const [error, setError] = useState<any>({ title: "", body: "" });
   const theme: any = useTheme();
 
   const close = () => setOpen(false);
 
   useEffect(() => {
+    //TODO move to UTIL, consider creating a dervived atom for starter position
     function moreThan9Starter(arr: any) {
       let totalStarter = 0;
       for (let i = 0; i < arr.length; i++) {
-        if (arr[i]["Starter"] === "Yes") totalStarter++;
+        if (arr[i][STARTER] === "Yes") totalStarter++;
       }
       return totalStarter > 9;
+    }
+
+    function validStarterType(arr: any) {
+      let playerPosition: any = new Map();
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i][STARTER] === "Yes") {
+          const position = arr[i][POSITION];
+          const count = (playerPosition.get(position) || 0) + 1;
+          playerPosition.set(position, count);
+        }
+      }
+      console.log(playerPosition);
+      for (const [key, value] of playerPosition) {
+        if (key === GOALKEEPER) if (value !== 1) return false;
+        if (key === DEFENDER) if (value !== 4) return false;
+        if (key === MIDFIELDER) if (value !== 3) return false;
+        if (key === FORWARD) if (value !== 3) return false;
+      }
+      return true;
     }
 
     let state: any = {};
@@ -34,28 +61,39 @@ export default function Formation() {
         title: "No player data found",
         body: "Please import your roster first",
       };
-    } else if (!!roster && moreThan9Starter(roster)) {
+    } else if (
+      !!roster &&
+      moreThan9Starter(roster) &&
+      !validStarterType(roster)
+    ) {
       state = {
         title: "There are too many starter",
         body: "Your team has too many starters for one or more of the positions in the 4-3-3 formation",
       };
-    } else if (!!roster && !moreThan9Starter(roster)) {
+    } else if (
+      !!roster &&
+      !moreThan9Starter(roster) &&
+      validStarterType(roster)
+    ) {
       state = {
         title: "",
         body: "",
       };
     }
 
-    if (state.title !== "" && state.body !== "") {
-      setError(state);
-      setOpen(true);
-    }
+    setError(state);
+    console.log(state.title !== "" && state.body !== "", state);
+    state.title !== "" && state.body !== "" ? setOpen(true) : setOpen(false);
   }, [roster]);
 
   useEffect(() => {
-    if(!roster) return 
-    setPlayer(roster[0])
-  }, [roster])
+    if (!roster) return;
+    setPlayer(roster[0]);
+  }, [roster]);
+
+  useEffect(() => {
+    console.log("what is open", open);
+  }, [open]);
 
   return (
     <>
@@ -109,7 +147,11 @@ export default function Formation() {
               borderRadius: theme.spacing(0.5),
             }}
           >
-            {!roster ? <EmptyPlayerCard /> : <PlayCard  selected={selectedPlayer}/>}
+            {!roster ? (
+              <EmptyPlayerCard />
+            ) : (
+              <PlayCard selected={selectedPlayer} />
+            )}
           </Paper>
         </Box>
       </Box>
