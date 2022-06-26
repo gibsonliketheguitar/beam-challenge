@@ -40,8 +40,6 @@ export default function PlayCard({ selected }: any) {
     [SAVES]: saves,
   }: any = selected;
 
-  console.log("check", playerImg);
-
   const GAME_STATS = [
     { label: APPEARANCES, value: appearances },
     { label: MIN_PLAYED, value: minutes },

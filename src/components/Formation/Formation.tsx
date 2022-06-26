@@ -93,6 +93,7 @@ export default function Formation() {
     !state.status ? setOpen(false) : setOpen(true);
   }, [starter]);
 
+  //ON load set goalLeg as initial player
   useEffect(() => {
     const goalKeeper = starter.filter(
       (player: any) => player[POSITION] === GOALKEEPER
@@ -143,7 +144,9 @@ export default function Formation() {
               borderRadius: theme.spacing(0.5),
             }}
           >
-            {!error.status && <Field />}
+            {!error.status && (
+              <Field selected={selectedPlayer} setSelected={setPlayer} />
+            )}
           </Paper>
           <Paper
             sx={{

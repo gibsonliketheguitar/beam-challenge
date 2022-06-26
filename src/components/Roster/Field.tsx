@@ -3,15 +3,17 @@ import { Avatar } from "@mui/material";
 import { Box } from "@mui/system";
 import { useAtomValue } from "jotai";
 import { starterAtom } from "../../store/atom";
-import { JERSEY_NUMBER, POSITION } from "../../utils/constant/PLAYER";
+import { JERSEY_NUMBER, NAME, POSITION } from "../../utils/constant/PLAYER";
 import {
   DEFENDER,
   FORWARD,
   GOALKEEPER,
   MIDFIELDER,
 } from "../../utils/constant/POSITION";
+import { useTheme } from "@emotion/react";
 
-export default function Field() {
+export default function Field({ selected, setSelected }: any) {
+  const theme: any = useTheme();
   const starter = useAtomValue(starterAtom);
 
   function getPlayersByPosition(position: any) {
@@ -23,18 +25,22 @@ export default function Field() {
   }
 
   function renderPosition(position: any) {
+    if (!selected) return <></>;
     const playerPosArr = getPlayersByPosition(position);
     const value = positionVar(playerPosArr);
     const offSet = value / 2;
     return playerPosArr.map((player: any, index: any) => {
+      const isSelected = player[NAME] === selected[NAME];
       return (
         <Avatar
+          onClick={() => setSelected(player)}
           key={position + "_" + index}
           sx={{
             position: "absolute",
             margin: 2,
             top: `${index * value + offSet}%`,
             left: "0%",
+            backgroundColor: isSelected ? theme.palette.primary.main : "",
           }}
         >
           {player[JERSEY_NUMBER]}
