@@ -46,6 +46,7 @@ export default function PlayerEdit({
   const noChange = !isDirty;
 
   const onCloseEditAndParentPopover = () => {
+    reset({});
     setOpen(false);
     closeParentPopover();
   };
@@ -80,11 +81,6 @@ export default function PlayerEdit({
   const PLAYER_DATA = roster.filter(
     (player: any) => player["Player Name"] === anchorOwner.current
   )[0];
-
-  useEffect(() => {
-    if (!roster) return;
-    reset({});
-  }, [roster]);
 
   if (!open) return <></>;
   return (
@@ -181,9 +177,9 @@ export default function PlayerEdit({
               control={control}
               defaultValue={PLAYER_DATA["Nationality"]}
               render={({ field }) => (
-                <SelectOption 
-                  id='NationalityPosition'
-                  label={'Nationality'}
+                <SelectOption
+                  id="NationalityPosition"
+                  label={"Nationality"}
                   field={field}
                   options={NATION_OPTIONS}
                 />
@@ -196,10 +192,10 @@ export default function PlayerEdit({
               control={control}
               defaultValue={PLAYER_DATA["Position"]}
               render={({ field }) => (
-                <SelectOption 
-                  id='PlayerPosition' 
-                  label='Position' 
-                  field={field} 
+                <SelectOption
+                  id="PlayerPosition"
+                  label="Position"
+                  field={field}
                   options={POSITION_OPTIONS}
                 />
               )}
