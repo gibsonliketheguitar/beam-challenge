@@ -27,13 +27,14 @@ export default function Formation() {
   const close = () => setOpen(false);
 
   useEffect(() => {
+    if (!roster) return;
     //TODO move to UTIL, consider creating a dervived atom for starter position
-    function moreThan9Starter(arr: any) {
+    function numStarter(arr: any) {
       let totalStarter = 0;
       for (let i = 0; i < arr.length; i++) {
         if (arr[i][STARTER] === "Yes") totalStarter++;
       }
-      return totalStarter > 9;
+      return totalStarter;
     }
 
     function validStarterType(arr: any) {
@@ -45,7 +46,6 @@ export default function Formation() {
           playerPosition.set(position, count);
         }
       }
-      console.log(playerPosition);
       for (const [key, value] of playerPosition) {
         if (key === GOALKEEPER) if (value !== 1) return false;
         if (key === DEFENDER) if (value !== 4) return false;
@@ -54,7 +54,9 @@ export default function Formation() {
       }
       return true;
     }
-
+    //TODO look at how to handle global error logic
+    //There has to be a cleaner way. OOP?
+    //What happens when you need to add more error logic
     let state: any = {};
     if (!roster) {
       state = {
@@ -62,17 +64,24 @@ export default function Formation() {
         body: "Please import your roster first",
       };
     } else if (
-      !!roster &&
-      moreThan9Starter(roster) &&
+      (!roster && numStarter(roster) < 11) ||
       !validStarterType(roster)
     ) {
       state = {
-        title: "There are too many starter",
+        title: "There are too few starters",
+        body: "Your team has too few starters for one or more of the positions in the 4-3-3 formation",
+      };
+    } else if (
+      !!roster ||
+      (numStarter(roster) > 11 && !validStarterType(roster))
+    ) {
+      state = {
+        title: "There are too many starters",
         body: "Your team has too many starters for one or more of the positions in the 4-3-3 formation",
       };
     } else if (
       !!roster &&
-      !moreThan9Starter(roster) &&
+      numStarter(roster) === 11 &&
       validStarterType(roster)
     ) {
       state = {
@@ -80,9 +89,7 @@ export default function Formation() {
         body: "",
       };
     }
-
     setError(state);
-    console.log(state.title !== "" && state.body !== "", state);
     state.title !== "" && state.body !== "" ? setOpen(true) : setOpen(false);
   }, [roster]);
 
@@ -90,10 +97,6 @@ export default function Formation() {
     if (!roster) return;
     setPlayer(roster[0]);
   }, [roster]);
-
-  useEffect(() => {
-    console.log("what is open", open);
-  }, [open]);
 
   return (
     <>
