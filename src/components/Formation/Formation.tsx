@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { Box, Paper } from "@mui/material";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 
 import EmptyPlayerCard from "./EmptyPlayerCard";
 import TeamName from "./TeamName";
@@ -10,12 +10,14 @@ import PlayCard from "./PlayerCard";
 import ErrorDialog from "../../common/ErrorDialog";
 import { starterAtom } from "../../store/atom";
 import { POSITION, STARTER } from "../../utils/constant/PLAYER";
+
 import {
   DEFENDER,
   FORWARD,
   GOALKEEPER,
   MIDFIELDER,
 } from "../../utils/constant/POSITION";
+import Field from "../Roster/Field";
 
 export default function Formation() {
   const starter = useAtomValue(starterAtom);
@@ -141,7 +143,7 @@ export default function Formation() {
               borderRadius: theme.spacing(0.5),
             }}
           >
-            TODO: Formation
+            {!error.status && <Field />}
           </Paper>
           <Paper
             sx={{
