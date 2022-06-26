@@ -20,31 +20,47 @@ import {
   CLEAN_SHEETS,
   SAVES,
   JERSEY_NUMBER,
+  GOALS,
+  ASSISTS,
 } from "../../utils/constant/PLAYER";
+import { GOALKEEPER } from "../../utils/constant/POSITION";
 
 export default function PlayCard({ selected }: any) {
   const theme = useTheme();
   if (!selected) return <></>;
   const {
-    [NAME]: name,
-    [POSITION]: position,
+    [APPEARANCES]: appearances,
+    [ASSISTS]: assists,
+    [CLEAN_SHEETS]: sheets,
+    [GOALS]: goals,
     [HEIGHT]: height,
     [IMG_PLAYER]: playerImg,
     [IMG_FLAG]: flagImg,
     [JERSEY_NUMBER]: number,
-    [WEIGHT]: weight,
-    [NATIONALITY]: nationality,
-    [APPEARANCES]: appearances,
     [MIN_PLAYED]: minutes,
-    [CLEAN_SHEETS]: sheets,
+    [NAME]: name,
+    [NATIONALITY]: nationality,
+    [POSITION]: position,
     [SAVES]: saves,
+    [WEIGHT]: weight,
   }: any = selected;
+
+  const playerType = (position: any) => {
+    return position === GOALKEEPER
+      ? [
+          { label: CLEAN_SHEETS, value: sheets },
+          { label: SAVES, value: saves },
+        ]
+      : [
+          { label: GOALS, value: goals },
+          { label: ASSISTS, value: assists },
+        ];
+  };
 
   const GAME_STATS = [
     { label: APPEARANCES, value: appearances },
     { label: MIN_PLAYED, value: minutes },
-    { label: CLEAN_SHEETS, value: sheets },
-    { label: SAVES, value: saves },
+    ...playerType(selected[POSITION]),
   ];
 
   return (
@@ -104,7 +120,7 @@ export default function PlayCard({ selected }: any) {
               Height
             </Typography>
             <Typography variant="h4" color="text.primary" p={1}>
-              {height + " m"}
+              {height.slice(0, 1) + "." + height.slice(1) + " m"}
             </Typography>
           </Box>
           <Box

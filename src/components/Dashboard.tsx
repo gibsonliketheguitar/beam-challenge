@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
-import { Box, Paper, styled } from "@mui/material";
+import { Box } from "@mui/material";
 import { Container } from "@mui/system";
 
 import IconButton from "../common/IconButton";
@@ -11,7 +11,7 @@ import FormationIcon from "../assets/FormationIcon";
 
 export default function Dashboard() {
   const theme: any = useTheme();
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
 
   enum Nav {
     Roster = 0,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTheme } from "@emotion/react";
 import { useAtom } from "jotai";
 import {
@@ -16,6 +16,7 @@ import Papa from "papaparse";
 import { importModalAtom, rosterAtom } from "../../store/atom";
 import CloseIcon from "../../assets/CloseIcon";
 import IconButton from "@mui/material/IconButton";
+import { useUpdateAtom } from "jotai/utils";
 
 export default function ImportTeam() {
   const theme: any = useTheme();
@@ -23,8 +24,7 @@ export default function ImportTeam() {
   const [importData, setImportData] = useState([]);
   const [importFile, setImportFile] = useState<any | null>(null);
   const [importError, setImportError] = useState(false);
-  //TODO update with update Atom
-  const [_, setRoster] = useAtom(rosterAtom);
+  const setRoster = useUpdateAtom(rosterAtom);
 
   const validCSV =
     !!importFile &&
@@ -56,7 +56,6 @@ export default function ImportTeam() {
   const onOpen = () => setOpen(true);
   const onClose = () => setOpen(false);
   const onFileUpload = (e: any) => {
-    //TODO look at the tic tack toe stuff and shopping cart
     const file: any = e.target.files;
     if (file.length === 0) return;
     if (file) setImportFile(file[0]);
