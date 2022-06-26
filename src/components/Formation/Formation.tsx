@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@emotion/react";
 import { Box, Paper } from "@mui/material";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 
 import EmptyPlayerCard from "./EmptyPlayerCard";
 import TeamName from "./TeamName";
 import PlayCard from "./PlayerCard";
 
 import ErrorDialog from "../../common/ErrorDialog";
-import { rosterAtom } from "../../store/atom";
+import { starterAtom } from "../../store/atom";
 import { POSITION, STARTER } from "../../utils/constant/PLAYER";
 import {
   DEFENDER,
@@ -18,25 +18,21 @@ import {
 } from "../../utils/constant/POSITION";
 
 export default function Formation() {
-  const [roster, _] = useAtom(rosterAtom);
+  const starter = useAtomValue(starterAtom);
+  const starterLen = starter.length;
   const [open, setOpen] = useState(false);
   const [selectedPlayer, setPlayer] = useState(null);
-  const [error, setError] = useState<any>({ title: "", body: "" });
+  const [error, setError] = useState<any>({
+    status: true,
+    title: "",
+    body: "",
+  });
   const theme: any = useTheme();
 
   const close = () => setOpen(false);
 
   useEffect(() => {
-    if (!roster) return;
     //TODO move to UTIL, consider creating a dervived atom for starter position
-    function numStarter(arr: any) {
-      let totalStarter = 0;
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i][STARTER] === "Yes") totalStarter++;
-      }
-      return totalStarter;
-    }
-
     function validStarterType(arr: any) {
       let playerPosition: any = new Map();
       for (let i = 0; i < arr.length; i++) {
@@ -57,46 +53,50 @@ export default function Formation() {
     //TODO look at how to handle global error logic
     //There has to be a cleaner way. OOP?
     //What happens when you need to add more error logic
-    let state: any = {};
-    if (!roster) {
+    let state: any = {
+      status: true,
+    };
+    if (starterLen === 0) {
       state = {
+        status: true,
         title: "No player data found",
         body: "Please import your roster first",
       };
-    } else if (
-      (!roster && numStarter(roster) < 11) ||
-      !validStarterType(roster)
-    ) {
+    } else if (starterLen < 11) {
       state = {
+        status: true,
         title: "There are too few starters",
         body: "Your team has too few starters for one or more of the positions in the 4-3-3 formation",
       };
-    } else if (
-      !!roster ||
-      (numStarter(roster) > 11 && !validStarterType(roster))
-    ) {
+    } else if (starterLen > 11) {
       state = {
+        status: true,
         title: "There are too many starters",
         body: "Your team has too many starters for one or more of the positions in the 4-3-3 formation",
       };
-    } else if (
-      !!roster &&
-      numStarter(roster) === 11 &&
-      validStarterType(roster)
-    ) {
+    } else if (starterLen === 11 && !validStarterType(starter)) {
       state = {
+        status: true,
+        title: "Number of player per position is invalid",
+        body: "Your team has invalid starters for one or more of the positions in the 4-3-3 formation",
+      };
+    } else if (starterLen === 11 && validStarterType(starter)) {
+      state = {
+        status: false,
         title: "",
         body: "",
       };
     }
     setError(state);
-    state.title !== "" && state.body !== "" ? setOpen(true) : setOpen(false);
-  }, [roster]);
+    !state.status ? setOpen(false) : setOpen(true);
+  }, [starter]);
 
   useEffect(() => {
-    if (!roster) return;
-    setPlayer(roster[0]);
-  }, [roster]);
+    const goalKeeper = starter.filter(
+      (player: any) => player[POSITION] === GOALKEEPER
+    )[0];
+    setPlayer(goalKeeper);
+  }, []);
 
   return (
     <>
@@ -150,7 +150,7 @@ export default function Formation() {
               borderRadius: theme.spacing(0.5),
             }}
           >
-            {!roster ? (
+            {!!error.status ? (
               <EmptyPlayerCard />
             ) : (
               <PlayCard selected={selectedPlayer} />
