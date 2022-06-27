@@ -1,5 +1,7 @@
 # Getting Started with Create React App
 
+### `npm install'
+
 ### `npm start`
 
 Runs the app in the development mode.\
