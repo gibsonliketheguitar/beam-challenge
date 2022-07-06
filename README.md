@@ -12,3 +12,15 @@ You will also see any lint errors in the console.
 
 DEPLOYMENT URL
 https://beam-challenge.vercel.app/
+
+"Take home assignmen from BEAM
+
+Koneksys & Beam Dynamics
+https://freckle-ink-be8.notion.site/React-Developer-Code-Challenge-278786931afd4253afd60ec069a932d3
+
+Time estimation 40+ hr
+
+Comments.
+- Learned about Material UI
+- Challenge is ridiculous for take home, but I got it 75% way there. Maybe will bring it to 100% responsive, and match styling
+- Recieved no feedback and comment after all the effort. 
