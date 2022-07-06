@@ -21,6 +21,6 @@ https://freckle-ink-be8.notion.site/React-Developer-Code-Challenge-278786931afd4
 Time estimation 40+ hr
 
 Comments.
-- Learned about Material UI
+- Learned about Material UI. (Nice for creating internal tool)
 - Challenge is ridiculous for take home, but I got it 75% way there. Maybe will bring it to 100% responsive, and match styling
-- Recieved no feedback and comment after all the effort. 
+- Recieved no feedback and comment after all the effort. Never again will I do these type of take homes
